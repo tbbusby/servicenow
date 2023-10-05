@@ -1,0 +1,45 @@
+function sections() {
+	return {
+		'incident Date Filter' : {
+			'table' : 'incident',
+		},
+		'Request Opened Date Filter' : {
+			'table' : 'incident',
+			'field': 'opened_at'
+		},
+		'Problem Opened Date Filter' : {
+			'table' : 'problem',
+			'field': 'opened_at'
+		}
+	};
+}
+
+function render() {
+	var table = 'incident';
+	var field = 'opened_at';
+	if(table) {
+		var jr = new GlideJellyRunner();
+		renderer.getRenderProperties().setDeferInlineScripts(false);
+		jr.setRenderProperties(renderer.getRenderProperties());
+		jr.setTwoPhase(true);
+		jr.setVariable('jvar_uid', randInt(100000, 999999) + '' + randInt(100000, 999999));
+		if(field)
+			jr.setVariable('jvar_field',field);
+		jr.setVariable('jvar_table',table);
+		return jr.runFromTemplate('interactive_date_filter.xml');
+	}
+	else {
+		// Default to NOOP
+		return 'Invalid widget type';
+	}
+}
+
+function getEditLink() {
+	if (!gs.hasRole('admin'))
+		return '';
+	return "sys_ui_page.do?sysparm_query=name=" + renderer.getPreferences().get("name");
+}
+
+function randInt(min, max) {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
